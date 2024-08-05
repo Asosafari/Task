@@ -1,7 +1,6 @@
 package com.example.rayan_task.service;
 import com.example.rayan_task.config.Token;
 import com.example.rayan_task.entity.User;
-import com.example.rayan_task.mapper.UserMapper;
 import com.example.rayan_task.model.UserDTO;
 import com.example.rayan_task.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,6 @@ import java.util.concurrent.atomic.AtomicReference;
 public class LoginServiceImpl implements LoginService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
 
     @Override
     public Optional<String> login(String username, String password) {
@@ -45,7 +43,6 @@ public class LoginServiceImpl implements LoginService {
                 return Optional.empty();
             }
         }
-
         return Optional.of(user.get().getToken());
     }
 
@@ -55,7 +52,7 @@ public class LoginServiceImpl implements LoginService {
         if (user.isPresent()){
             return user.get().getTokenCreatedTime().isAfter(LocalDateTime.now().minusSeconds(1800));
         }
-        log.info("Token Expired");
+        log.info("Token invalid");
         return false;
     }
 
@@ -96,6 +93,5 @@ public class LoginServiceImpl implements LoginService {
                 .build());
 
     }
-
 
 }
