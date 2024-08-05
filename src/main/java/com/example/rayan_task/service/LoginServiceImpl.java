@@ -57,18 +57,24 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public UserDTO register(UserDTO userDTO) {
-        User user = User.builder()
-                .username(userDTO.getUsername())
-                .password(userDTO.getPassword())
-                .id(UUID.randomUUID())
-                .version(1)
-                .build();
-        user = userRepository.save(user);
-        return UserDTO.builder()
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .build();
+    public synchronized UserDTO register(UserDTO userDTO) {
+        try {
+            User user = User.builder()
+                    .username(userDTO.getUsername())
+                    .password(userDTO.getPassword())
+                    .id(UUID.randomUUID())
+                    .version(1)
+                    .build();
+            user = userRepository.save(user);
+            userDTO = UserDTO.builder()
+                    .username(user.getUsername())
+                    .password(user.getPassword())
+                    .build();
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
+        return userDTO;
     }
 
     private User updateTokenUser(User user){
@@ -85,13 +91,19 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public Page<UserDTO> listUsers(Integer pageNumber, Integer pageSize) {
-        PageRequest pageRequest = BuildPageRequest.build(pageNumber,pageSize);
-        return userRepository.findAll(pageRequest).map(user -> UserDTO.builder()
-                .password(user.getPassword())
-                .username(user.getUsername())
-                .build());
-
+    public synchronized Page<UserDTO>  listUsers(Integer pageNumber, Integer pageSize) {
+        PageRequest pageRequest = BuildPageRequest.build(pageNumber, pageSize);
+        Page<UserDTO> userDTOPage = null;
+        try {
+            userDTOPage =  userRepository.findAll(pageRequest).map(user -> UserDTO.builder()
+                    .password(user.getPassword())
+                    .username(user.getUsername())
+                    .build());
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
+        return userDTOPage;
     }
 
 }
