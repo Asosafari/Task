@@ -23,12 +23,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Builder
 @Entity
+@Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = "username") })
 public class User{
     @Id
     @UuidGenerator
     @JdbcTypeCode(SqlTypes.CHAR)
     @Column(length = 36, columnDefinition = "varchar(36)",updatable = false,nullable = false)
     private UUID id;
+    @Column(nullable = false, unique = true)
     private String username;
     private String password;
     private String token;

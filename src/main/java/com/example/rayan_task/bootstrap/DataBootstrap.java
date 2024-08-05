@@ -23,7 +23,7 @@ public class DataBootstrap implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-      load();
+     // load();
     }
 
     private void load() {
